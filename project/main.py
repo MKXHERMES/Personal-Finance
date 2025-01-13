@@ -294,3 +294,4 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Error connecting to MySQL: {e}")
     app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
