@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #00796b;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #004d40;
+        }
+        .income-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .income-table th, .income-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .income-table th {
+            background-color: #00796b;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .income-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+      <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>Finance Dashboard</h2>
+                <button id="closeSidebar" class="close-btn">&times;</button>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{url_for('home')}}">Dashboard</a></li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Transactions</a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="active">Income</a>
+                        <a href="{{url_for('expense')}}">Expense</a>
+                    </div>
+                </li>
+                <li><a href="#">Budget</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="{{ url_for('login') }}">Logout</a></li>
+            </ul>
+      </nav>
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3 style="color: #004d40;">Add Investment/Income</h3>
+            <form id="income-form">
+                <div class="form-group">
+                    <label for="incomeType">Investment/Income Type</label>
+                    <select id="incomeType" name="incomeType" class="form-control">
+                        <option value="Deposit">Deposit</option>
+                        <option value="SIP">SIP</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                </div>
+                <div id="depositFields">
+                    <div class="form-group">
+                        <label for="depositType">Deposit Type</label>
+                        <input type="text" id="depositType" name="depositType" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="depAmount">Deposit Amount</label>
+                        <input type="number" id="depAmount" name="depAmount" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="maturityDate">Maturity Date</label>
+                        <input type="date" id="maturityDate" name="maturityDate" class="form-control">
+                    </div>
+                </div>
+                <div id="sipFields" class="hidden">
+                    <div class="form-group">
+                        <label for="sipAmount">SIP Amount</label>
+                        <input type="number" id="sipAmount" name="sipAmount" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="sipDate">Date</label>
+                        <input type="date" id="sipDate" name="sipDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="fundName">Fund Name</label>
+                        <input type="text" id="fundName" name="fundName" class="form-control">
+                    </div>
+                </div>
+                <div id="customFields" class="hidden">
+                    <div class="form-group">
+                        <label for="customAmount">Amount</label>
+                        <input type="number" id="customAmount" name="customAmount" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="customCategory">Description</label>
+                        <input type="text" id="customCategory" name="customCategory" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="customDate">Date</label>
+                        <input type="date" id="customDate" name="customDate" class="form-control">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Add Income/Investment</button>
+            </form>
+        </div>
+        <div class="card">
+            <h3 style="color: #004d40;">Investment/Income Table</h3>
+            <table class="income-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Investment/Income Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id="income-table-body">
+                    {% for income in incomes %}
+                    <tr>
+                        <td>{{ income.unique_id }}</td>
+                        <td>{{ income.income_type }}</td>
+                        <td>{{ income.amount }}</td>
+                        <td>{{ income.date or '' }}</td>
+                        <td>{{ income.details }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    <script>
+        document.getElementById('incomeType').addEventListener('change', function() {
+            const depositFields = document.getElementById('depositFields');
+            const sipFields = document.getElementById('sipFields');
+            const customFields = document.getElementById('customFields');
+
+            depositFields.classList.add('hidden');
+            sipFields.classList.add('hidden');
+            customFields.classList.add('hidden');
+
+            if (this.value === 'Deposit') {
+                depositFields.classList.remove('hidden');
+            } else if (this.value === 'SIP') {
+                sipFields.classList.remove('hidden');
+            } else if (this.value === 'Custom') {
+                customFields.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('income-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/income', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to add income. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding income.');
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+</body>
+</html>
