@@ -286,6 +286,7 @@ def expense():
     return render_template("expense.html", categories=categories, expenses=expenses)
 
 if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True)
     with app.app_context():
         try:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -293,5 +294,3 @@ if __name__ == "__main__":
             print("Connected to MySQL successfully.")
         except Exception as e:
             print(f"Error connecting to MySQL: {e}")
-    app.run(debug=True)
-    app.run(host='0.0.0.0', debug=True)
